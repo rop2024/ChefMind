@@ -33,4 +33,7 @@ Built with inspiration and creative input from
 
 ---
 
+## Docs
+Link - https://docs.google.com/document/d/13PecOwooGrBYJGgr1gygFo00IFVQrUyf1Ck_yM-OzeU/edit?usp=sharing
+
 ### ✨ *Good food, made smarter.*

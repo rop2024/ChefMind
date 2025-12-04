@@ -8,6 +8,7 @@ import Register from './pages/Register';
 import Favorites from './pages/Favorites';
 import AddRecipe from './pages/AddRecipe';
 import MyRecipes from './pages/MyRecipes';
+import MealPlanner from './pages/MealPlanner';
 import './index.css';
 
 function App() {
@@ -36,6 +37,12 @@ function App() {
                     className="text-gray-700 hover:text-orange-600 transition-colors font-medium"
                   >
                     Search
+                  </Link>
+                  <Link
+                    to="/meal-planner"
+                    className="text-gray-700 hover:text-orange-600 transition-colors font-medium"
+                  >
+                    Meal Planner
                   </Link>
                   <Link
                     to="/favorites"
@@ -91,6 +98,10 @@ function App() {
           <Route
             path="/recipe/:id"
             element={user ? <RecipeDetail /> : <Navigate to="/login" replace />}
+          />
+          <Route
+            path="/meal-planner"
+            element={user ? <MealPlanner /> : <Navigate to="/login" replace />}
           />
           <Route
             path="/favorites"

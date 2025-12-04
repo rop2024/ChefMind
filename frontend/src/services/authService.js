@@ -1,60 +1,101 @@
 import axios from 'axios';
 
-const API_BASE_URL = import.meta.env.VITE_API_BASE_URL;
+const API_URL = import.meta.env.VITE_API_URL || 'http://localhost:5000/api';
 
-const storageUserKey = 'promptly_user';
-const storageTokenKey = 'promptly_token';
+// Create axios instance
+const api = axios.create({
+  baseURL: API_URL,
+});
 
-const setAuth = (token, user) => {
-  if (token) {
-    axios.defaults.headers.common['Authorization'] = `Bearer ${token}`;
-    localStorage.setItem(storageTokenKey, token);
-  }
-  if (user) {
-    localStorage.setItem(storageUserKey, JSON.stringify(user));
-  }
-};
-
-const clearAuth = () => {
-  delete axios.defaults.headers.common['Authorization'];
-  localStorage.removeItem(storageUserKey);
-  localStorage.removeItem(storageTokenKey);
-};
-
-const authService = {
-  login: async ({ email, password }) => {
-    const res = await axios.post(`${API_BASE_URL}/auth/login`, { email, password });
-    // server responds with { success, token, user }
-    if (res.data?.token) {
-      setAuth(res.data.token, res.data.user);
-    }
-    return res.data;
-  },
-
-  register: async ({ name, email, password }) => {
-    const res = await axios.post(`${API_BASE_URL}/auth/register`, { name, email, password });
-    if (res.data?.token) {
-      setAuth(res.data.token, res.data.user);
-    }
-    return res.data;
-  },
-
-  logout: () => {
-    clearAuth();
-  },
-
-  getCurrentUser: () => {
-    const raw = localStorage.getItem(storageUserKey);
-    const token = localStorage.getItem(storageTokenKey);
+// Add token to requests
+api.interceptors.request.use(
+  (config) => {
+    const token = localStorage.getItem('token');
     if (token) {
-      axios.defaults.headers.common['Authorization'] = `Bearer ${token}`;
+      config.headers.Authorization = `Bearer ${token}`;
     }
-    return raw ? JSON.parse(raw) : null;
+    return config;
+  },
+  (error) => {
+    return Promise.reject(error);
+  }
+);
+
+// Response interceptor to handle token expiration
+api.interceptors.response.use(
+  (response) => response,
+  (error) => {
+    if (error.response?.status === 401) {
+      localStorage.removeItem('token');
+      localStorage.removeItem('user');
+      window.location.href = '/';
+    }
+    return Promise.reject(error);
+  }
+);
+
+export const authService = {
+  // Register user
+  register: async (userData) => {
+    try {
+      const response = await api.post('/auth/register', userData);
+      if (response.data.success) {
+        localStorage.setItem('token', response.data.token);
+        localStorage.setItem('user', JSON.stringify(response.data.user));
+      }
+      return response.data;
+    } catch (error) {
+      throw new Error(error.response?.data?.message || 'Registration failed');
+    }
   },
 
-  getProtectedData: async () => {
-    // this hits /api/auth/me which is protected
-    return axios.get(`${API_BASE_URL}/auth/me`);
+  // Login user
+  login: async (credentials) => {
+    try {
+      const response = await api.post('/auth/login', credentials);
+      if (response.data.success) {
+        localStorage.setItem('token', response.data.token);
+        localStorage.setItem('user', JSON.stringify(response.data.user));
+      }
+      return response.data;
+    } catch (error) {
+      throw new Error(error.response?.data?.message || 'Login failed');
+    }
+  },
+
+  // Logout user
+  logout: () => {
+    localStorage.removeItem('token');
+    localStorage.removeItem('user');
+  },
+
+  // Get current user
+  getCurrentUser: () => {
+    const user = localStorage.getItem('user');
+    return user ? JSON.parse(user) : null;
+  },
+
+  // Get auth token
+  getToken: () => {
+    return localStorage.getItem('token');
+  },
+
+  // Check if user is authenticated
+  isAuthenticated: () => {
+    return !!localStorage.getItem('token');
+  },
+
+  // Update user details
+  updateDetails: async (userData) => {
+    try {
+      const response = await api.put('/auth/updatedetails', userData);
+      if (response.data.success) {
+        localStorage.setItem('user', JSON.stringify(response.data.data.user));
+      }
+      return response.data;
+    } catch (error) {
+      throw new Error(error.response?.data?.message || 'Update failed');
+    }
   }
 };
 

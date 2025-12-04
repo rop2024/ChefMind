@@ -1,12 +1,16 @@
 import React, { useState, useEffect } from 'react';
+import { Routes, Route, Link, useNavigate } from 'react-router-dom';
 import axios from 'axios';
 import authService from './services/authService.js';
 import SearchRecipes from './components/SearchRecipes';
+import RecipeDetail from './components/RecipeDetail';
 import './index.css';
 
 const API_BASE_URL = import.meta.env.VITE_API_BASE_URL;
 
 function App() {
+  const navigate = useNavigate();
+  
   // Connection status message
   const [connectionMessage, setConnectionMessage] = useState('');
 
@@ -90,8 +94,23 @@ function App() {
   return (
     <div className="min-h-screen bg-gray-50">
       <header className="bg-white shadow-sm">
-        <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-4">
-          <h1 className="text-2xl font-bold text-gray-900">Recipe Finder</h1>
+        <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-4 flex justify-between items-center">
+          <h1 className="text-2xl font-bold text-gray-900">
+            <Link to="/" className="hover:text-blue-600 transition">
+              ChefMind - Recipe Finder
+            </Link>
+          </h1>
+          {currentUser && (
+            <div className="flex items-center space-x-4">
+              <span className="text-sm text-gray-600">Hi, {currentUser.name}</span>
+              <button
+                onClick={handleLogout}
+                className="text-sm bg-red-500 text-white px-3 py-1 rounded hover:bg-red-600 transition"
+              >
+                Logout
+              </button>
+            </div>
+          )}
         </div>
       </header>
       
@@ -186,52 +205,10 @@ function App() {
             </div>
           </div>
         ) : (
-          <div>
-            {/* Welcome Section */}
-            <div className="max-w-md mx-auto mt-8 mb-6">
-              <div className="bg-white rounded-lg shadow-md p-6">
-                <h2 className="text-2xl font-semibold mb-4 text-center">Welcome, {currentUser.name}!</h2>
-
-                {authMessage && (
-                  <div className={`mb-4 p-3 rounded ${authMessage.toLowerCase().includes('success') ? 'bg-green-100 text-green-700' : 'bg-red-100 text-red-700'}`}>
-                    {authMessage}
-                  </div>
-                )}
-
-                <div className="space-y-3 mb-6">
-                  <p><strong>Email:</strong> {currentUser.email}</p>
-                  <p><strong>Role:</strong> {currentUser.role}</p>
-                  <p><strong>ID:</strong> {currentUser.id}</p>
-                </div>
-
-                <div className="space-y-3">
-                  <button
-                    onClick={handleLogout}
-                    className="w-full bg-red-500 text-white px-4 py-2 rounded-md hover:bg-red-600 transition duration-200"
-                  >
-                    Logout
-                  </button>
-
-                  <button
-                    onClick={async () => {
-                      try {
-                        const result = await authService.getProtectedData();
-                        setAuthMessage('Protected data loaded: ' + JSON.stringify(result.data));
-                      } catch (error) {
-                        setAuthMessage('Failed to load protected data');
-                      }
-                    }}
-                    className="w-full bg-green-500 text-white px-4 py-2 rounded-md hover:bg-green-600 transition duration-200"
-                  >
-                    Test Protected Route
-                  </button>
-                </div>
-              </div>
-            </div>
-
-            {/* Search Recipes */}
-            <SearchRecipes />
-          </div>
+          <Routes>
+            <Route path="/" element={<SearchRecipes />} />
+            <Route path="/recipe/:id" element={<RecipeDetail />} />
+          </Routes>
         )}
       </main>
     </div>

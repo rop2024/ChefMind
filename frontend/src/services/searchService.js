@@ -37,10 +37,12 @@ export const searchService = {
     }
   },
 
-  // Get recipe details by ID
-  getRecipeDetails: async (recipeId) => {
+  // Get detailed recipe information
+  getRecipeDetails: async (recipeId, forceRefresh = false) => {
     try {
-      const response = await api.get(`/search/recipe/${recipeId}`);
+      const response = await api.get(`/search/recipe/${recipeId}`, {
+        params: { forceRefresh }
+      });
       return response.data;
     } catch (error) {
       throw new Error(error.response?.data?.message || 'Failed to fetch recipe details');

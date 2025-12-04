@@ -1,4 +1,5 @@
 import React, { useState } from 'react';
+import { useNavigate } from 'react-router-dom';
 import searchService from '../services/searchService';
 
 const SearchRecipes = () => {
@@ -272,7 +273,12 @@ const RecipeCategory = ({ title, subtitle, recipes, type }) => {
 
 // Enhanced Recipe Card Component
 const RecipeCard = ({ recipe, type }) => {
+  const navigate = useNavigate();
   const { matchMetrics } = recipe;
+  
+  const handleCardClick = () => {
+    navigate(`/recipe/${recipe.id}`);
+  };
   
   const getMatchBadge = (type, matchMetrics) => {
     if (type === 'exact') {
@@ -298,7 +304,10 @@ const RecipeCard = ({ recipe, type }) => {
   const matchBadge = getMatchBadge(type, matchMetrics);
 
   return (
-    <div className="bg-white rounded-lg shadow-md overflow-hidden hover:shadow-lg transition duration-200 border border-gray-100">
+    <div 
+      className="bg-white rounded-lg shadow-md overflow-hidden hover:shadow-lg transition duration-200 border border-gray-100 cursor-pointer"
+      onClick={handleCardClick}
+    >
       <div className="relative">
         <img
           src={recipe.image || '/placeholder-recipe.jpg'}

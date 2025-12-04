@@ -1,6 +1,7 @@
 import React, { useState, useEffect } from 'react';
 import { useParams, useNavigate, Link } from 'react-router-dom';
 import searchService from '../services/searchService';
+import mealPlanService from '../services/mealPlanService';
 
 const RecipeDetails = () => {
   const { id } = useParams();
@@ -10,6 +11,8 @@ const RecipeDetails = () => {
   const [error, setError] = useState('');
   const [activeTab, setActiveTab] = useState('ingredients');
   const [forceRefresh, setForceRefresh] = useState(false);
+  const [addingToMealPlan, setAddingToMealPlan] = useState(false);
+  const [mealPlanSlot, setMealPlanSlot] = useState('');
 
   useEffect(() => {
     fetchRecipeDetails();
@@ -37,6 +40,40 @@ const RecipeDetails = () => {
   const handleForceRefresh = () => {
     setForceRefresh(true);
     setTimeout(() => setForceRefresh(false), 1000);
+  };
+
+  const handleAddToMealPlan = async (slot) => {
+    setAddingToMealPlan(true);
+    
+    try {
+      const recipeData = {
+        id: recipe.id,
+        title: recipe.title,
+        image: recipe.image,
+        servings: recipe.servings || 1,
+        source: 'spoonacular',
+        nutrition: recipe.nutrition || {
+          calories: 0,
+          protein: '0g',
+          fat: '0g',
+          carbohydrates: '0g'
+        }
+      };
+
+      const today = new Date();
+      today.setHours(0, 0, 0, 0);
+      
+      await mealPlanService.addRecipeToMealPlan(today, slot, recipeData);
+      
+      setMealPlanSlot(slot);
+      setTimeout(() => {
+        setAddingToMealPlan(false);
+        setMealPlanSlot('');
+      }, 2000);
+    } catch (err) {
+      setError(err.message);
+      setAddingToMealPlan(false);
+    }
   };
 
   if (loading) {
@@ -186,6 +223,29 @@ const RecipeDetails = () => {
                   </svg>
                 </a>
               )}
+              
+              {/* Add to Meal Plan */}
+              <div className="mt-6">
+                <div className="flex items-center space-x-4">
+                  <span className="text-gray-700">Add to today's meal plan:</span>
+                  <div className="flex space-x-2">
+                    {['breakfast', 'lunch', 'dinner', 'snack'].map((slot) => (
+                      <button
+                        key={slot}
+                        onClick={() => handleAddToMealPlan(slot)}
+                        disabled={addingToMealPlan}
+                        className={`px-3 py-1 text-sm rounded-md capitalize ${
+                          addingToMealPlan && mealPlanSlot === slot
+                            ? 'bg-green-100 text-green-800'
+                            : 'bg-gray-100 text-gray-700 hover:bg-gray-200'
+                        }`}
+                      >
+                        {addingToMealPlan && mealPlanSlot === slot ? '✓ Added' : slot}
+                      </button>
+                    ))}
+                  </div>
+                </div>
+              </div>
             </div>
           </div>
         </div>

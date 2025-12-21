@@ -1,4 +1,5 @@
 import React, { useState } from 'react';
+import usePageTitle from './hooks/usePageTitle';
 import { Routes, Route, Link, Navigate, useNavigate } from 'react-router-dom';
 import authService from './services/authService.js';
 import SearchRecipes from './components/SearchRecipes';
@@ -14,6 +15,7 @@ import Settings from './pages/Settings';
 import './index.css';
 
 function App() {
+  usePageTitle();
   const user = authService.getCurrentUser();
   const navigate = useNavigate();
   const [showLogoutConfirm, setShowLogoutConfirm] = useState(false);

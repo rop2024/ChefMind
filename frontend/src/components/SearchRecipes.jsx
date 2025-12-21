@@ -55,8 +55,30 @@ const SearchRecipes = () => {
 
   return (
     <div className="max-w-6xl mx-auto p-6">
-      <h1 className="text-3xl font-bold text-gray-800 mb-2">Smart Recipe Finder</h1>
-      <p className="text-gray-600 mb-6">Find recipes categorized by ingredient matches</p>
+      <div className="flex items-center justify-between mb-4">
+        <h1 className="text-2xl font-bold text-gray-800">Smart Recipe Finder</h1>
+        {/* Info Dropdown Tooltip */}
+        <div className="relative group">
+          <button className="flex items-center px-2 py-1 text-gray-600 hover:text-blue-600 focus:outline-none">
+            <span className="material-icons text-xl mr-1">info</span>
+            Info
+          </button>
+          <div className="absolute right-0 mt-2 w-80 bg-white border border-gray-200 rounded-lg shadow-lg opacity-0 group-hover:opacity-100 group-focus-within:opacity-100 pointer-events-none group-hover:pointer-events-auto group-focus-within:pointer-events-auto transition-opacity z-20 p-4 text-sm text-gray-700">
+            <div className="mb-2 font-semibold flex items-center text-blue-600"><span className="material-icons text-base mr-1">check_circle</span> Do's</div>
+            <ul className="mb-3 list-disc list-inside">
+              <li>Enter ingredients separated by commas (e.g., chicken, rice, tomato)</li>
+              <li>Use common ingredient names</li>
+              <li>Check "Ignore pantry items" for best results</li>
+            </ul>
+            <div className="mb-2 font-semibold flex items-center text-red-500"><span className="material-icons text-base mr-1">highlight_off</span> Don'ts</div>
+            <ul className="list-disc list-inside">
+              <li>Don't use special characters or emojis</li>
+              <li>Don't enter full recipes, just ingredients</li>
+              <li>Don't leave the field empty</li>
+            </ul>
+          </div>
+        </div>
+      </div>
       
       {/* Search Form */}
       <form onSubmit={handleSearch} className="bg-white rounded-lg shadow-md p-6 mb-8">

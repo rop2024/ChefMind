@@ -253,7 +253,7 @@ const MealPlanner = () => {
         </div>
 
         {/* Stats Overview */}
-        {stats && (
+        {stats && !showRecipeSearch.show && (
           <div className="grid grid-cols-1 md:grid-cols-4 gap-4 mb-8">
             <div className="bg-white rounded-lg shadow p-6">
               <div className="text-2xl font-bold text-blue-600">{stats.summary?.totalDaysPlanned || 0}</div>

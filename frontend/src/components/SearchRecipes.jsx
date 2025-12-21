@@ -142,28 +142,7 @@ const SearchRecipes = () => {
         </div>
       )}
 
-      {/* Results Summary */}
-      {results && (
-        <div className="mb-8">
-          <div className="bg-gradient-to-r from-blue-50 to-indigo-50 rounded-lg p-6 border border-blue-200">
-            <h2 className="text-xl font-semibold text-gray-800 mb-3">Search Results</h2>
-            <div className="grid grid-cols-1 md:grid-cols-3 gap-4 text-center">
-              <div className="bg-white rounded-lg p-4 shadow-sm">
-                <div className="text-2xl font-bold text-green-600">{results.summary.exactMatches}</div>
-                <div className="text-sm text-gray-600">Perfect Matches</div>
-              </div>
-              <div className="bg-white rounded-lg p-4 shadow-sm">
-                <div className="text-2xl font-bold text-yellow-600">{results.summary.oneMissing}</div>
-                <div className="text-sm text-gray-600">One Ingredient Missing</div>
-              </div>
-              <div className="bg-white rounded-lg p-4 shadow-sm">
-                <div className="text-2xl font-bold text-blue-600">{results.summary.otherMatches}</div>
-                <div className="text-sm text-gray-600">Other Good Matches</div>
-              </div>
-            </div>
-          </div>
-        </div>
-      )}
+      {/* Results Summary removed as requested */}
 
       {/* Categorized Results */}
       {results && (

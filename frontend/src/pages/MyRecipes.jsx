@@ -147,7 +147,7 @@ const MyRecipes = () => {
           </div>
         ) : (
           <div className="bg-white rounded-lg shadow p-12 text-center">
-            <div className="text-gray-400 text-6xl mb-4">🍳</div>
+            <span className="material-icons text-gray-400 text-6xl mb-4">free_breakfast</span>
             <h3 className="text-xl font-semibold text-gray-600 mb-2">No recipes yet</h3>
             <p className="text-gray-500 mb-6">Start by creating your first recipe!</p>
             <Link
@@ -229,7 +229,7 @@ const RecipeCard = ({ recipe, onDelete }) => {
         
         <div className="flex justify-between items-center">
           <div className="flex space-x-4 text-sm text-gray-500">
-            <span>❤️ {recipe.likes}</span>
+            <span><span className="material-icons" style={{verticalAlign: 'middle'}}>favorite</span> {recipe.likes}</span>
             <span>⭐ {recipe.favoritesCount}</span>
           </div>
           <Link

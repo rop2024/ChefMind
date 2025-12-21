@@ -187,6 +187,7 @@ const categorizeRecipes = (recipes, userIngredients) => {
 
 // Enhanced search with matching algorithm
 router.post('/by-ingredients', protect, asyncHandler(async (req, res) => {
+  console.log('[DEBUG] Search by ingredients called with body:', req.body);
   const { ingredients, number = 15, ranking = 1, ignorePantry = true } = req.body;
   
   if (!ingredients || (Array.isArray(ingredients) && ingredients.length === 0)) {
@@ -293,6 +294,7 @@ const parseInstructions = (analyzedInstructions) => {
 
 // Get detailed recipe information with caching
 router.get('/recipe/:id', protect, asyncHandler(async (req, res) => {
+  console.log('[DEBUG] Get recipe details called for id:', req.params.id, 'query:', req.query);
   const { id } = req.params;
   const { forceRefresh = false } = req.query;
 
@@ -433,6 +435,7 @@ router.get('/recipe/:id', protect, asyncHandler(async (req, res) => {
 
 // Get cache statistics (admin endpoint)
 router.get('/cache/stats', protect, asyncHandler(async (req, res) => {
+  console.log('[DEBUG] Get cache stats called for user:', req.user?.id);
   try {
     const stats = await recipeCache.getCacheStats();
     

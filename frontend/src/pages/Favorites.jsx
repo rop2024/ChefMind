@@ -157,7 +157,7 @@ const Favorites = () => {
           </div>
         ) : (
           <div className="bg-white rounded-lg shadow p-12 text-center">
-            <div className="text-gray-400 text-6xl mb-4">❤️</div>
+            <span className="material-icons text-gray-400 text-6xl mb-4">favorite</span>
             <h3 className="text-xl font-semibold text-gray-600 mb-2">No favorites yet</h3>
             <p className="text-gray-500 mb-6">
               {activeTab === 'all' 

@@ -4,6 +4,7 @@ import ErrorResponse from '../utils/errorResponse.js';
 
 // Protect routes - verify JWT
 export const protect = async (req, res, next) => {
+  console.log('[DEBUG] Protect middleware called for path:', req.path, 'method:', req.method);
   let token;
 
   if (req.headers.authorization && req.headers.authorization.startsWith('Bearer')) {
@@ -19,14 +20,17 @@ export const protect = async (req, res, next) => {
   try {
     // Verify token
     const decoded = jwt.verify(token, process.env.JWT_SECRET);
+    console.log('[DEBUG] Token verified for user id:', decoded.id);
     
     // Get user from the token
     req.user = await User.findById(decoded.id);
     
     if (!req.user) {
+      console.log('[DEBUG] No user found with id:', decoded.id);
       return next(new ErrorResponse('No user found with this id', 404));
     }
     
+    console.log('[DEBUG] User authenticated:', req.user.name);
     next();
   } catch (error) {
     return next(new ErrorResponse('Not authorized to access this route', 401));

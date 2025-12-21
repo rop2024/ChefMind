@@ -91,7 +91,7 @@ const RecipeDetails = () => {
     return (
       <div className="min-h-screen bg-gray-50 flex items-center justify-center">
         <div className="max-w-md w-full bg-white rounded-lg shadow-md p-6">
-          <div className="text-red-500 text-6xl mb-4 text-center">🍳</div>
+          <span className="material-icons text-red-500 text-6xl mb-4 text-center">free_breakfast</span>
           <h2 className="text-xl font-semibold text-gray-800 mb-2 text-center">Recipe Not Found</h2>
           <p className="text-gray-600 mb-6 text-center">{error}</p>
           <button

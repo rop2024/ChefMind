@@ -25,7 +25,7 @@ function App() {
         <div className="container mx-auto px-4 py-4">
           <div className="flex justify-between items-center">
             <div className="flex items-center space-x-2">
-              <span className="text-3xl">👨‍🍳</span>
+              <span className="material-icons text-3xl" style={{verticalAlign: 'middle'}}>restaurant_menu</span>
               <h1 className="text-2xl font-bold text-orange-600">ChefMind</h1>
             </div>
 

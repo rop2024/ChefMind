@@ -39,6 +39,7 @@ app.use('/api/users', userRoutes);
 
 // Health check
 app.get('/health', (req, res) => {
+  console.log('[DEBUG] Health check called');
   res.json({ 
     status: 'Server is running!', 
     timestamp: new Date().toISOString(),

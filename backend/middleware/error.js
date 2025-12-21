@@ -1,11 +1,12 @@
 import ErrorResponse from '../utils/errorResponse.js';
 
 const errorHandler = (err, req, res, next) => {
+  console.log('[DEBUG] Error handler triggered for path:', req.path, 'method:', req.method);
   let error = { ...err };
   error.message = err.message;
 
   // Log to console for dev
-  console.log(err);
+  console.log('[DEBUG] Error details:', err);
 
   // Mongoose bad ObjectId
   if (err.name === 'CastError') {

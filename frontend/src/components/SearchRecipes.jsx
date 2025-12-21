@@ -203,7 +203,7 @@ const SearchRecipes = () => {
            results.oneMissing.length === 0 && 
            results.otherMatches.length === 0 && (
             <div className="text-center py-12">
-              <div className="text-gray-400 text-6xl mb-4">🍳</div>
+              <span className="material-icons text-gray-400 text-6xl mb-4">free_breakfast</span>
               <h3 className="text-xl font-semibold text-gray-600 mb-2">No matches found</h3>
               <p className="text-gray-500">Try different ingredients or adjust your search parameters</p>
             </div>
@@ -223,7 +223,7 @@ const RecipeCategory = ({ title, subtitle, recipes, type }) => {
           border: 'border-green-200',
           header: 'bg-green-50 border-green-200',
           badge: 'bg-green-100 text-green-800',
-          icon: '✅'
+          icon: '<span class="material-icons" style="vertical-align: middle;">check_circle</span>'
         };
       case 'oneMissing':
         return {
@@ -384,7 +384,7 @@ const RecipeCard = ({ recipe, type }) => {
         {/* Recipe Info */}
         <div className="flex justify-between items-center text-sm text-gray-600 pt-2 border-t border-gray-100">
           <span className="flex items-center">
-            <span className="mr-1">👍</span>
+            <span className="material-icons mr-1" style={{verticalAlign: 'middle'}}>thumb_up</span>
             {recipe.likes || 0}
           </span>
           <span className="text-xs text-gray-500">

@@ -9,6 +9,7 @@ const router = express.Router();
 // @route   POST /api/auth/register
 // @access  Public
 router.post('/register', asyncHandler(async (req, res) => {
+  console.log('[DEBUG] Register route called with body:', req.body);
   const { name, email, password } = req.body;
 
   // Check if user exists
@@ -45,6 +46,7 @@ router.post('/register', asyncHandler(async (req, res) => {
 // @route   POST /api/auth/login
 // @access  Public
 router.post('/login', asyncHandler(async (req, res) => {
+  console.log('[DEBUG] Login route called with body:', req.body);
   const { email, password } = req.body;
 
   // Validate email & password
@@ -92,6 +94,7 @@ router.post('/login', asyncHandler(async (req, res) => {
 // @route   GET /api/auth/me
 // @access  Private
 router.get('/me', protect, asyncHandler(async (req, res) => {
+  console.log('[DEBUG] Get me route called for user:', req.user?.id);
   const user = await User.findById(req.user.id);
 
   res.json({
@@ -112,6 +115,7 @@ router.get('/me', protect, asyncHandler(async (req, res) => {
 // @route   PUT /api/auth/updatedetails
 // @access  Private
 router.put('/updatedetails', protect, asyncHandler(async (req, res) => {
+  console.log('[DEBUG] Update details route called for user:', req.user?.id, 'with body:', req.body);
   const fieldsToUpdate = {
     name: req.body.name,
     email: req.body.email

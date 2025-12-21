@@ -237,10 +237,10 @@ const MealPlanner = () => {
   }
 
   const mealSlots = [
-    { id: 'breakfast', label: 'Breakfast', icon: '🍳', color: 'bg-yellow-50 border-yellow-200' },
-    { id: 'lunch', label: 'Lunch', icon: '🥗', color: 'bg-green-50 border-green-200' },
-    { id: 'dinner', label: 'Dinner', icon: '🍲', color: 'bg-blue-50 border-blue-200' },
-    { id: 'snack', label: 'Snack', icon: '🍎', color: 'bg-purple-50 border-purple-200' }
+    { id: 'breakfast', label: 'Breakfast', icon: (<span className="material-icons" style={{ verticalAlign: 'middle' }}>free_breakfast</span>), color: 'bg-yellow-50 border-yellow-200' },
+    { id: 'lunch', label: 'Lunch', icon: (<span className="material-icons" style={{ verticalAlign: 'middle' }}>lunch_dining</span>), color: 'bg-green-50 border-green-200' },
+    { id: 'dinner', label: 'Dinner', icon: (<span className="material-icons" style={{ verticalAlign: 'middle' }}>dinner_dining</span>), color: 'bg-blue-50 border-blue-200' },
+    { id: 'snack', label: 'Snack', icon: (<span className="material-icons" style={{ verticalAlign: 'middle' }}>emoji_food_beverage</span>), color: 'bg-purple-50 border-purple-200' }
   ];
 
   return (
@@ -727,7 +727,7 @@ const RecipeSearchModal = ({ slot, searchQuery, searchResults, searchLoading, on
             </div>
           ) : (
             <div className="p-8 text-center">
-              <div className="text-gray-400 text-4xl mb-4">🍳</div>
+              <span className="material-icons text-gray-400 text-4xl mb-4">free_breakfast</span>
               <p className="text-gray-500">Start typing to search for recipes</p>
             </div>
           )}

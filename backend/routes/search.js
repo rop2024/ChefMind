@@ -1,7 +1,6 @@
 import express from 'express';
 import axios from 'axios';
 import asyncHandler from 'express-async-handler';
-import { protect } from '../middleware/auth.js';
 import recipeCache from '../utils/recipeCache.js';
 
 const router = express.Router();
@@ -186,7 +185,7 @@ const categorizeRecipes = (recipes, userIngredients) => {
 };
 
 // Enhanced search with matching algorithm
-router.post('/by-ingredients', protect, asyncHandler(async (req, res) => {
+router.post('/by-ingredients', asyncHandler(async (req, res) => {
   console.log('[DEBUG] Search by ingredients called with body:', req.body);
   const { ingredients, number = 15, ranking = 1, ignorePantry = true } = req.body;
   
@@ -293,7 +292,7 @@ const parseInstructions = (analyzedInstructions) => {
 };
 
 // Get detailed recipe information with caching
-router.get('/recipe/:id', protect, asyncHandler(async (req, res) => {
+router.get('/recipe/:id', asyncHandler(async (req, res) => {
   console.log('[DEBUG] Get recipe details called for id:', req.params.id, 'query:', req.query);
   const { id } = req.params;
   const { forceRefresh = false } = req.query;
@@ -314,7 +313,7 @@ router.get('/recipe/:id', protect, asyncHandler(async (req, res) => {
     let source = 'cache';
     
     if (!forceRefresh) {
-      recipe = await recipeCache.getRecipe(recipeId);
+      recipe = recipeCache.getRecipe(recipeId);
     }
     
     // If not in cache or force refresh, fetch from API
@@ -362,12 +361,8 @@ router.get('/recipe/:id', protect, asyncHandler(async (req, res) => {
       };
       
       // Save to cache
-      recipe = await recipeCache.saveRecipe(recipeData);
-      
-      if (!recipe) {
-        // If cache save failed, use the data directly
-        recipe = recipeData;
-      }
+      recipeCache.saveRecipe(recipeData);
+      recipe = recipeData;
     }
     
     // Format response
@@ -429,24 +424,6 @@ router.get('/recipe/:id', protect, asyncHandler(async (req, res) => {
       success: false,
       message: 'Error fetching recipe details',
       error: process.env.NODE_ENV === 'development' ? error.message : undefined
-    });
-  }
-}));
-
-// Get cache statistics (admin endpoint)
-router.get('/cache/stats', protect, asyncHandler(async (req, res) => {
-  console.log('[DEBUG] Get cache stats called for user:', req.user?.id);
-  try {
-    const stats = await recipeCache.getCacheStats();
-    
-    res.json({
-      success: true,
-      data: stats
-    });
-  } catch (error) {
-    res.status(500).json({
-      success: false,
-      message: 'Error fetching cache stats'
     });
   }
 }));

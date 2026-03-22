@@ -26,14 +26,19 @@ const SearchRecipes = () => {
     
     try {
       const ingredientList = ingredients.split(',').map(ing => ing.trim()).filter(ing => ing);
+      console.log('Searching with ingredients:', ingredientList);
       const result = await searchService.searchByIngredients(ingredientList, searchParams);
+      console.log('Search result:', result);
       
       if (result.success) {
+        console.log('Setting results:', result.data);
         setResults(result.data);
       } else {
+        console.log('Search failed:', result.message);
         setError(result.message || 'Failed to fetch recipes');
       }
     } catch (err) {
+      console.log('Search error:', err);
       setError(err.message);
       setResults(null);
     } finally {
@@ -169,6 +174,7 @@ const SearchRecipes = () => {
       {/* Categorized Results */}
       {results && (
         <div className="space-y-8">
+          {console.log('Rendering results:', results)}
           {/* Exact Matches */}
           {results.exactMatches.length > 0 && (
             <RecipeCategory 
@@ -204,6 +210,7 @@ const SearchRecipes = () => {
            results.oneMissing.length === 0 && 
            results.otherMatches.length === 0 && (
             <div className="text-center py-12">
+              {console.log('No results found')}
               <span className="material-icons text-gray-400 text-6xl mb-4">free_breakfast</span>
               <h3 className="text-xl font-semibold text-gray-600 mb-2">No matches found</h3>
               <p className="text-gray-500">Try different ingredients or adjust your search parameters</p>

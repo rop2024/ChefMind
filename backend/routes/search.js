@@ -47,6 +47,7 @@ const normalizeIngredientName = (ingredientName) => {
 // Calculate match metrics between user ingredients and recipe
 const calculateMatchMetrics = (userIngredients, recipe) => {
   const normalizedUserIngredients = userIngredients.map(normalizeIngredientName);
+  console.log(`[DEBUG] Calculating match for recipe ${recipe.id}: userIngredients=${normalizedUserIngredients.join(', ')}`);
   
   // Normalize recipe ingredients
   const normalizedUsedIngredients = recipe.usedIngredients.map(ing => 
@@ -55,6 +56,9 @@ const calculateMatchMetrics = (userIngredients, recipe) => {
   const normalizedMissedIngredients = recipe.missedIngredients.map(ing => 
     normalizeIngredientName(ing.name)
   );
+  
+  console.log(`[DEBUG] Recipe used: ${normalizedUsedIngredients.join(', ')}`);
+  console.log(`[DEBUG] Recipe missed: ${normalizedMissedIngredients.join(', ')}`);
   
   const allRecipeIngredients = [...normalizedUsedIngredients, ...normalizedMissedIngredients];
   
@@ -82,6 +86,8 @@ const calculateMatchMetrics = (userIngredients, recipe) => {
   // Calculate match ratio
   const totalUsedIngredients = normalizedUsedIngredients.length;
   const matchRatio = totalUsedIngredients > 0 ? matchedIngredients.length / totalUsedIngredients : 0;
+  
+  console.log(`[DEBUG] Matched: ${matchedIngredients.join(', ')}, Missing: ${missingIngredients.join(', ')}, Ratio: ${matchRatio}`);
   
   return {
     matchedIngredients,
@@ -137,18 +143,24 @@ const categorizeRecipes = (recipes, userIngredients) => {
   
   recipes.forEach(recipe => {
     const { missingCount, matchRatio, matchedCount, totalUsedIngredients } = recipe.matchMetrics;
+    console.log(`[DEBUG] Recipe ${recipe.id}: missingCount=${missingCount}, matchRatio=${matchRatio}, matchedCount=${matchedCount}, totalUsedIngredients=${totalUsedIngredients}`);
     
     // Exact match: No missing ingredients and high match ratio
     if (missingCount === 0 && matchRatio >= 0.8) {
+      console.log(`[DEBUG] Adding to exactMatches: ${recipe.title}`);
       exactMatches.push(recipe);
     }
     // One missing: Only 1 missing ingredient and good match ratio
     else if (missingCount === 1 && matchRatio >= 0.6) {
+      console.log(`[DEBUG] Adding to oneMissing: ${recipe.title}`);
       oneMissing.push(recipe);
     }
-    // Other matches with 2-3 missing ingredients
-    else if (missingCount <= 3 && matchRatio >= 0.4) {
+    // Other matches with reasonable missing ingredients and some match
+    else if (missingCount <= 5 && matchRatio >= 0.2 && matchedCount > 0) {
+      console.log(`[DEBUG] Adding to otherMatches: ${recipe.title}`);
       otherMatches.push(recipe);
+    } else {
+      console.log(`[DEBUG] Recipe not categorized: ${recipe.title} - missingCount=${missingCount}, matchRatio=${matchRatio}`);
     }
   });
   
@@ -197,6 +209,7 @@ router.post('/by-ingredients', asyncHandler(async (req, res) => {
   }
 
   const normalizedIngredients = normalizeIngredients(ingredients);
+  console.log('[DEBUG] Normalized ingredients:', normalizedIngredients);
   
   if (normalizedIngredients.length === 0) {
     return res.status(400).json({
@@ -206,28 +219,34 @@ router.post('/by-ingredients', asyncHandler(async (req, res) => {
   }
 
   try {
-    const response = await axios.get('https://api.spoonacular.com/recipes/findByIngredients', {
+    const response = await axios.get('https://api.spoonacular.com/recipes/complexSearch', {
       params: {
-        ingredients: normalizedIngredients.join(','),
+        includeIngredients: normalizedIngredients.join(','),
         number: Math.min(number, 25), // Limit to 25 for better performance
-        ranking,
+        fillIngredients: true,
         ignorePantry,
         apiKey: process.env.SPOONACULAR_API_KEY
       }
     });
 
+    console.log('[DEBUG] Spoonacular complexSearch response length:', response.data.results.length);
+    console.log('[DEBUG] First recipe sample:', response.data.results[0]);
+
     // Format recipes with match data
-    const recipesWithMatch = formatRecipesWithMatch(response.data, normalizedIngredients);
+    const recipesWithMatch = formatRecipesWithMatch(response.data.results, normalizedIngredients);
+    console.log('[DEBUG] Recipes with match length:', recipesWithMatch.length);
+    console.log('[DEBUG] First recipe with match:', recipesWithMatch[0]);
     
     // Categorize recipes
     const categorizedRecipes = categorizeRecipes(recipesWithMatch, normalizedIngredients);
+    console.log('[DEBUG] Categorized recipes:', categorizedRecipes);
     
     res.json({
       success: true,
       data: categorizedRecipes,
       searchMeta: {
         userIngredients: normalizedIngredients,
-        searchCount: response.data.length
+        searchCount: response.data.results.length
       }
     });
 
